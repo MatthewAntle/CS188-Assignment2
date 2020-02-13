@@ -1,0 +1,302 @@
+swagger: "2.0"
+info:
+   version: 1.0.0
+   title: Spikes API
+   description: RESTful API for Drake University Apparel
+paths:
+   /items:
+     get:
+       description: Returns a collection of items
+       responses:
+         "200":
+           description: A collection of items
+         "401":
+           description: Unauthorized
+         "403":
+           description: Forbidden
+         default:
+           description: Unexpected error
+     post:
+       description: Adds a new item
+       responses:
+         "201":
+           description: Item successfully created
+         "303":
+           description: See Other
+           headers:
+             Location:
+               type: string
+               description: Location of an existing item
+         "401":
+           description: Unauthorized
+         "403":
+           description: Forbidden
+   "/items/{itemId}":
+     get:
+       description: Returns an item
+       parameters:
+         - name: itemId
+           type: string
+           in: path
+           description: Identifier for an item
+           required: true
+       responses:
+         "200":
+           description: An item
+
+         "404":
+           description: Item not found
+         default:
+           description: Unexpected error
+     put:
+       description: Updates an item
+       parameters:
+         - name: itemId
+           type: string
+           in: path
+           description: Identifier for an item
+           required: true
+       responses:
+         "204":
+           description: Item successfully updated
+         "404":
+           description: Item not found
+     delete:
+       description: Deletes an item
+       parameters:
+         - name: itemId
+           type: string
+           in: path
+           description: Identifier for an item
+           required: true
+       responses:
+         "204":
+           description: Item successfully deleted
+         "404":
+           description: Item not found
+         default:
+           description: Unexpected error
+   /customers:
+     get:
+      description: Returns a collection of customers
+      responses:
+         "200":
+           description: Customer Collection
+         "401":
+           description: Unauthorized
+         "403":
+           description: Forbidden
+         default:
+           description: Unexpected error
+   "/customers/{customerId}":
+     get:
+      description: Returns information about a customer
+      parameters:
+        - name: customerId
+          type: string
+          in: path
+          description: Customer Identifier
+          required: true
+      responses:
+        "200":
+          description: All customer information
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Customer not found
+        default:
+            description: Unknown Error
+     post:
+      description: Add a known customer
+      parameters:
+        - name: customerId
+          type: string
+          in: path
+          description: Customer Identifier
+          required: true
+        - name: firstName
+          type: string
+          in: header
+          description: Customer's first name
+          required: true
+        - name: lastName
+          type: string
+          in: header
+          description: Customer's last name
+          required: true
+        - name: email
+          type: string
+          in: header
+          description: Customer's email
+          required: true
+        - name: phoneNumber
+          type: integer
+          in: header
+          description: Customer's phone number
+          required: true
+      responses:
+        "201":
+          description: Customer created successfully
+        "303":
+          description: See Other
+        "401":
+          description: Unauthorized to add customer
+        "403":
+          description: Forbidden
+     put:
+      description: Updates a customer
+      parameters:
+        - name: customerId
+          type: string
+          in: path
+          description: Customer Identifier
+          required: true
+      responses:
+        "204":
+          description: Customer successfully updated
+        "404":
+          description: Customer not found
+     delete:
+      description: Deletes a customer
+      parameters:
+        - name: customerId
+          type: string
+          in: path
+          description: Customer Identifier
+          required: true
+      responses:
+        "204":
+          description: Customer successfully deleted
+        "404":
+          description: Customer not found
+   /cart:
+     get:
+      description: Returns all items in cart
+      responses:
+         "200":
+           description: A collection of items
+         "401":
+           description: Unauthorized
+         "403":
+           description: Forbidden
+         default:
+           description: Unexpected error
+   "/cart/{customerId}":
+    get:
+      description: Returns all items in a customer's cart
+      parameters:
+        - name: customerId
+          type: string
+          in: path
+          description: Customer Identifier
+          required: true
+      responses:
+        "200":
+          description: All items in User's cart
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Customer not found
+        default:
+            description: Unknown Error
+components:
+   schemas:
+     Item:
+       type: object
+       properties:
+         itemId:
+           type: string
+           format: uuid
+         name:
+           type: string
+           maxLength: 50
+         description:
+           type: string
+           maxLength: 50
+         price:
+           type: number
+           format: floating
+       example:
+         itemId: def5cd03-7bf4-49e9-8f0b-380f90c86ec1
+         name: "Drake Bulldogs Sweatshirt"
+         description: Get comfortable in these sweats and look fly while wearing them
+         price: 19.99
+     Items:
+       type: array
+       properties:
+         items:
+           type: array
+           items:
+             $ref: "#/components/schemas/Item"
+       example:
+         - itemId: def5cd03-7bf4-49e9-8f0b-380f90c86ec1
+           name: "Drake Bulldogs Sweatshirt"
+           description: Get comfortable in these sweats and look fly while wearing them
+           price: 19.99
+         - itemId: 504550bc-d21e-43c3-8767-0c1bd59a173c
+           name: "Drake Bulldogs Sweatpants"
+           description: Get comfortable in these sweats and look fly while wearing them
+           price: 19.99
+     ItemNotFound:
+       type: object
+       properties:
+         statusCode:
+           type: integer
+         error:
+           type: string
+         message:
+           type: string
+       example:
+         statusCode: 404
+         error: Not Found
+         message: Item not found
+     Error:
+       type: object
+       properties:
+         statusCode:
+           type: integer
+         error:
+           type: string
+         message:
+           type: string
+       example:
+         statusCode: 500
+         error: Unexpected Error
+         message: An unexpected error occurred while processing your request
+     Customer:
+      type: object
+      properties:
+        customerId:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          maxLength: 40
+        lastName:
+          type: string
+          maxLength: 40
+        email:
+          type: string
+          maxlength: 100
+        phoneNumber:
+          type: integer
+     Cart:
+      type: object
+      properties:
+        cartId:
+          type: string
+          format: uuid
+        belongsTo:
+          type: string
+          format: uuid
+        createdDate:
+          type: string
+          maxLength: 8
+        purchasedDate:
+          type: string
+          maxLength: 8
+
