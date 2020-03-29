@@ -1,7 +1,10 @@
 const {
     selectCarts,
     selectCartByCartId,
-    selectCartsByCustomerId
+    selectCartsByCustomerId,
+    insertCart,
+    updateCart,
+    deleteCartByCartID
 } = require('../repositories/cart-repository');
 
 const mapToModel = (cart) => ({
@@ -29,13 +32,24 @@ const getCartsByCustomerId = (customerId) => {
     return rows.map(mapToModel);
 };
 
-const getCartItemsByCartId = (cartId) => {
-    const cart = selectCartByCartId;
+const mapToDTO = (cart) => ({
+    'cart_id': cart.cartId,
+    'customer_id': cart.customerId,
+    'created_date': cart.createdDate,
+    'purchased_date': cart.purchasedDate
+});
 
-    return rows.map(mapToModel);
-}
+const addCart = (cart) => insertCart(mapToDTO(cart));
+
+const modifyCart = (cart) => updateCart(mapToDTO(cart));
+
+const removeCartByCartId = (cartId) => deleteCartByCartID(cartId);
+
 module.exports = {
     getAllCarts,
     getCartByCartId,
-    getCartsByCustomerId
+    getCartsByCustomerId,
+    addCart,
+    modifyCart,
+    removeCartByCartId
 };
