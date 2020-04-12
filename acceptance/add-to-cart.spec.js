@@ -52,6 +52,8 @@ describe('The Customers Cart', () => {
             quantity: chance.d6()
          };
 
+	 await frisby.post('http://localhost:3000/customers', customer);
+         await frisby.post('http://localhost:3000/carts', cart);
          await frisby.post('http://localhost:3000/items', firstItem);
          await frisby.post('http://localhost:3000/items', secondItem);
          await frisby.post('http://localhost:3000/cart-items', firstCartItem);
